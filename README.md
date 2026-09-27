@@ -6,14 +6,28 @@ Modern, 3D-styled personal portfolio website of **Rajeev Yadav**, Frontend Devel
 
 ## ✨ Features
 
+**Cinematic layer**
+- **Opening title sequence** — black screen, letterbox bars open, name + role fade in (skippable)
+- **Film grain** + **vignette** overlay for a graded, celluloid look
+- **Cinemascope frame** — thin black bars at the top and bottom of the viewport
+- **Scroll progress** — gradient light line across the top
+- **Chapter markers** — every section numbered (01 → 07) like film chapters
+- **Word-by-word title reveals** on scroll
+- **Light sweep** across cards on hover
+
+**3D & motion**
 - **3D particle space** background with mouse parallax
 - **3D tilt cards** — photo, education, skills, projects react to the pointer
+- **Hero parallax** on the photo stack
 - **Glassmorphism** navigation and cards
 - **Animated gradient** headline + typing effect
-- **Skill ticker**, cursor spotlight, glowing auras
+- **Skill ticker** (film-credits style) and cursor spotlight
 - **Scroll-reveal** 3D entrance for every section
+
+**Basics**
 - Fully **responsive** (mobile hamburger menu)
 - Respects **`prefers-reduced-motion`**
+- No frameworks, no build step
 
 ## 📑 Sections
 
