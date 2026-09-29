@@ -227,7 +227,9 @@ section{padding:clamp(70px,9vw,120px) 0;position:relative;
 @keyframes hop{0%,100%{transform:translateZ(85px) translateY(0)}50%{transform:translateZ(85px) translateY(-14px)}}
 
 /* ============ TICKER ============ */
-.ticker{border-block:1px solid var(--line);background:rgba(255,255,255,.02);padding:16px 0;overflow:hidden;
+.ticker{border-block:1px solid var(--line);background:rgba(255,255,255,.02);padding:16px 0;position:relative}
+/* the edge-fade mask lives on an inner wrapper, otherwise it would erase the side rails */
+.ticker-mask{overflow:hidden;
   mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
 /* padding-right = one gap, so translateX(-50%) lands exactly on item 8 (no 22px jump) */
@@ -335,7 +337,7 @@ section{padding:clamp(70px,9vw,120px) 0;position:relative;
   color:#eee;font-size:13.6px}
 
 /* ============ FOOTER ============ */
-footer{border-top:1px solid var(--line);padding:32px 0 46px;margin-top:24px;background:rgba(255,255,255,.015)}
+footer{border-top:1px solid var(--line);padding:32px 0 46px;margin-top:24px;position:relative;background:rgba(255,255,255,.015)}
 .foot{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font-size:14.4px;color:var(--muted)}
 .foot a{transition:.25s var(--ease)}
 .foot a:hover{color:var(--ink)}
@@ -666,9 +668,11 @@ body.introing .hero .reveal{opacity:0!important;transform:translateY(34px)!impor
 
   <!-- ===== SKILL TICKER ===== -->
   <div class="ticker" aria-hidden="true">
-    <div class="ticker-track" id="tickerTrack">
-      <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>React</span><span>Next.js</span><span>Responsive Design</span><span>Git &amp; GitHub</span>
-      <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>React</span><span>Next.js</span><span>Responsive Design</span><span>Git &amp; GitHub</span>
+    <div class="ticker-mask">
+      <div class="ticker-track" id="tickerTrack">
+        <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>React</span><span>Next.js</span><span>Responsive Design</span><span>Git &amp; GitHub</span>
+        <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>React</span><span>Next.js</span><span>Responsive Design</span><span>Git &amp; GitHub</span>
+      </div>
     </div>
   </div>
 
