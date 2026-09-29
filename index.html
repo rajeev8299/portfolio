@@ -578,7 +578,7 @@ body.introing .hero .reveal{opacity:0!important;transform:translateY(34px)!impor
      preload stays off until the script below opts in (reduced motion / data saver
      never download it), and it only fades in once a frame is actually ready. -->
 <video class="bg-video" id="bgVideo" muted playsinline preload="none" aria-hidden="true">
-  <source src="assets/bg-720.mp4" type="video/mp4" media="(min-width:769px)">
+  <source src="assets/solar-system.mp4" type="video/mp4" media="(min-width:769px)">
   <source src="assets/bg-360.mp4" type="video/mp4">
 </video>
 <div class="bg-veil" aria-hidden="true"></div>
@@ -1525,6 +1525,7 @@ body.introing .hero .reveal{opacity:0!important;transform:translateY(34px)!impor
         if (next < 0) next = 0;
         if (next > dur - 0.06) next = dur - 0.06;
         try { v.currentTime = next; } catch (e) {}
+v.style.transform = `scale(${1 + progress() * 0.5})`;
         requestAnimationFrame(tick);
         return;
       }
