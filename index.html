@@ -66,6 +66,46 @@ p{margin:0}
   mask-image:radial-gradient(circle at 50% 24%,#000,transparent 76%);
   -webkit-mask-image:radial-gradient(circle at 50% 24%,#000,transparent 76%)}
 
+/* ============ SCROLL-LINKED BACKGROUND VIDEO ============
+   Deepest backdrop layer: the frame you see is driven by how far you have
+   scrolled, so the picture advances with the page. Sits under the auras,
+   grid, spotlight and every section (all of which are translucent).     */
+.bg-video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-5;
+  pointer-events:none;opacity:0;background:transparent}
+/* reveal as a keyframe animation (not a class transition) so the fade still runs
+   when the class lands in the same frame the element first paints */
+.bg-video.on{animation:bgFadeIn 1.6s var(--ease) forwards}
+@keyframes bgFadeIn{from{opacity:0}to{opacity:.92}}
+.bg-veil{position:fixed;inset:0;z-index:-4;pointer-events:none;
+  background:
+    radial-gradient(120% 88% at 50% 44%,rgba(3,3,5,0) 36%,rgba(3,3,5,.55) 100%),
+    linear-gradient(180deg,rgba(3,3,5,.55),rgba(3,3,5,.74))}
+
+/* ============ CINEMATIC SIDE RAILS ============
+   A full-height colour line down BOTH edges of every section (+ ticker + footer so the
+   line stays unbroken from the top of the page to the bottom), with a light that scrolls
+   the entire height of that section. The right rail runs in reverse for a mirrored feel. */
+section::before,section::after,
+.ticker::before,.ticker::after,
+footer::before,footer::after{
+  content:"";position:absolute;top:0;bottom:0;width:2px;z-index:3;pointer-events:none;
+  background-image:
+    linear-gradient(180deg,rgba(34,211,238,.42) 0%,rgba(124,92,255,1) 32%,rgba(124,92,255,1) 64%,rgba(255,92,157,.72) 100%),
+    linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.98) 50%,rgba(255,255,255,0) 100%);
+  background-size:100% 100%,100% 26%;
+  background-repeat:no-repeat,no-repeat;
+  background-position:0 0,0 -60%;
+  box-shadow:0 0 16px rgba(124,92,255,.8),0 0 44px rgba(34,211,238,.35);
+  animation:railScroll 6s linear infinite;
+}
+section::before,.ticker::before,footer::before{left:0}
+section::after,.ticker::after,footer::after{right:0;animation-direction:reverse}
+footer::before,footer::after{top:-24px}  /* bridges footer's margin-top so the line never gaps */
+@keyframes railScroll{
+  from{background-position:0 0,0 -60%}
+  to  {background-position:0 0,0 160%}
+}
+
 /* ============ HELPERS ============ */
 .wrap{width:min(100% - (var(--pad) * 2),var(--max));margin-inline:auto}
 section{padding:clamp(70px,9vw,120px) 0;position:relative;
@@ -513,6 +553,7 @@ body.introing .hero .reveal{opacity:0!important;transform:translateY(34px)!impor
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
   .reveal{opacity:1;transform:none}
+  .bg-video{display:none!important}
 }
 </style>
 <noscript>
@@ -521,7 +562,7 @@ body.introing .hero .reveal{opacity:0!important;transform:translateY(34px)!impor
   .intro{display:none!important}
   .reveal{opacity:1!important;transform:none!important}
   .split .w>i{transform:none!important}
-  .toast,.beam,.grain{display:none!important}
+  .toast,.beam,.grain,.bg-video{display:none!important}
   @media (max-width:1080px){
     .menu{position:static!important;transform:none!important;visibility:visible!important;
       flex-direction:row;flex-wrap:wrap;background:transparent;border:0;padding:0 0 10px;backdrop-filter:none;gap:2px}
@@ -532,6 +573,15 @@ body.introing .hero .reveal{opacity:0!important;transform:translateY(34px)!impor
 </noscript>
 </head>
 <body>
+
+<!-- background video: native media queries pick 720p on desktop, 360p on phones.
+     preload stays off until the script below opts in (reduced motion / data saver
+     never download it), and it only fades in once a frame is actually ready. -->
+<video class="bg-video" id="bgVideo" muted playsinline preload="none" aria-hidden="true">
+  <source src="assets/bg-720.mp4" type="video/mp4" media="(min-width:769px)">
+  <source src="assets/bg-360.mp4" type="video/mp4">
+</video>
+<div class="bg-veil" aria-hidden="true"></div>
 
 <!-- ===== CINEMATIC LAYERS ===== -->
 <div class="progress" id="progress"></div>
@@ -1430,6 +1480,83 @@ body.introing .hero .reveal{opacity:0!important;transform:translateY(34px)!impor
     b.className = "beam";
     card.appendChild(b);
   });
+})();
+</script>
+
+<script>
+/* ============================================================
+   SCROLL-LINKED BACKGROUND VIDEO
+   Scroll position drives the video's frame, so the picture advances
+   exactly as far as you have scrolled. The loop only runs while the
+   frame is still chasing the scroll target, then idles until the next
+   scroll. If anything can never play (reduced motion, data saver,
+   offline, decode error) the gradient backdrop simply stays.
+   ============================================================ */
+(function () {
+  var v = document.getElementById("bgVideo");
+  if (!v) return;
+
+  var mq = window.matchMedia || function () { return { matches: false }; };
+  if (mq.call(window, "(prefers-reduced-motion: reduce)").matches) return;
+  if (navigator.connection && navigator.connection.saveData) return;
+
+  var ready = false, running = false;
+  var EASE = 0.28; /* how tightly the frame chases the scroll target */
+
+  function progress() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - window.innerHeight;
+    if (max <= 0) return 0;
+    var y = window.pageYOffset || doc.scrollTop || 0;
+    var p = y / max;
+    return p < 0 ? 0 : p > 1 ? 1 : p;
+  }
+
+  function tick() {
+    if (!ready) { running = false; return; }
+    var dur = v.duration;
+    if (dur && isFinite(dur) && dur > 0.2) {
+      var target = progress() * (dur - 0.06);
+      var cur = v.currentTime;
+      var d = target - cur;
+      if (Math.abs(d) > 0.03) {
+        /* long jumps are eased so a fast flick stays fluid, small ones land exactly */
+        var next = Math.abs(d) > 0.5 ? cur + d * EASE : target;
+        if (next < 0) next = 0;
+        if (next > dur - 0.06) next = dur - 0.06;
+        try { v.currentTime = next; } catch (e) {}
+        requestAnimationFrame(tick);
+        return;
+      }
+    }
+    running = false; /* settled — idle until the next scroll */
+  }
+
+  function kick() {
+    if (running) return;
+    running = true;
+    requestAnimationFrame(tick);
+  }
+
+  v.addEventListener("loadeddata", function () {
+    if (ready) return;
+    ready = true;
+    v.classList.add("on");
+    kick();
+  });
+  v.addEventListener("seeked", kick);
+  /* capture: a failing <source> reports on itself, not on the video */
+  v.addEventListener("error", function () { v.classList.remove("on"); }, true);
+
+  window.addEventListener("scroll", kick, { passive: true });
+  window.addEventListener("resize", kick);
+
+  /* jsdom (the headless test harness) has no media pipeline — skip the kickoff there
+     so it doesn't report a bogus load() error; real browsers get the prefetch. */
+  if (!/jsdom/i.test(navigator.userAgent || "")) {
+    v.preload = "auto";
+    try { v.load(); } catch (e) {}
+  }
 })();
 </script>
 </body>
