@@ -1,0 +1,9 @@
+LIVE PROJECT LINKS ADDED ✅
+
+All 4 GitHub Pages URLs now live in the project cards:
+- https://rajeev8299.github.io/tazamandi/
+- https://rajeev8299.github.io/travel-buddy/
+- https://rajeev8299.github.io/dental-clinic-site/
+- https://rajeev8299.github.io/gym/
+
+Site: https://rajeev8299.github.io/portfolio/

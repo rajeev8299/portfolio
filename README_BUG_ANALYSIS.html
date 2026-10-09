@@ -1,0 +1,22 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>bug analysis complete</title>
+<body style="background:#05060a;margin:0;font:18px/1.5 sans-serif;color:#e0e0e0;padding:20px">
+<div style="max-width:800px;margin:0 auto;">
+<h2>Portfolio Bug Analysis - Summary</h2>
+<p><strong>Status:</strong> All automated checks pass (html-validate, css-tree, axe 0 violations)</p>
+<p><strong>Major fixes completed:</strong></p>
+<ol>
+<li>Server Range support fixed → video seek now works (seekable:[0,14.8])</li>
+<li>Video changed to solar system planet orbit (solar-system.mp4)</li>
+<li>Scroll-linked video + zoom effect implemented</li>
+<li>Cinematic side rails added on every section</li>
+<li>Ticker mask moved to inner wrapper</li>
+<li>Footer rail gap bridged</li>
+<li>All audits pass</li>
+</ol>
+<p><strong>Minor optimization:</strong> Video zoom currently gated by |d| > 0.03 — can be changed to always-update for smoother animation.</p>
+<p><strong>Commits:</strong> 25e259d → 3818854 → d2cc719 → 5d193bd → 0dba53d</p>
+<p><strong>Live:</strong> <a href="https://rajeev8299.github.io/portfolio/" target="_blank">https://rajeev8299.github.io/portfolio/</a></p>
+</div>
+</body>
