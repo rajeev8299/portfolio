@@ -1,8 +1,8 @@
 # Rajeev Yadav — Portfolio
 
-Modern, 3D-styled personal portfolio website of **Rajeev Yadav**, Frontend Developer (Varanasi, UP, India).
+Modern, 3D-styled personal portfolio website of **Rajeev Yadav**, Web Developer (Varanasi, UP, India).
 
-> Single-file site — everything (HTML, CSS, JS) lives in `index.html`. No frameworks, no build step.
+> Modern Developer Portfolio built with **React, Next.js, TypeScript & Vanilla CSS**. Features 3D space particles, orbital planetary effects, and smooth interactive UI.
 
 ## ✨ Features
 
