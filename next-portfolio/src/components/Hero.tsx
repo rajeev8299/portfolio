@@ -47,6 +47,39 @@ export default function Hero() {
     }
   }, []);
 
+  // Stats count-up animation (starts from 0)
+  const [counts, setCounts] = useState({ projects: 0, degrees: 0, skills: 0, internship: 0 });
+
+  useEffect(() => {
+    const duration = 1600;
+    const start = performance.now();
+
+    const targets = { projects: 6, degrees: 2, skills: 5, internship: 1 };
+    let frameId: number;
+
+    const animate = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 4);
+
+      setCounts({
+        projects: Math.floor(ease * targets.projects),
+        degrees: Math.floor(ease * targets.degrees),
+        skills: Math.floor(ease * targets.skills),
+        internship: Math.floor(ease * targets.internship),
+      });
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(animate);
+      } else {
+        setCounts(targets);
+      }
+    };
+
+    frameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameId);
+  }, []);
+
   return (
     <section className="hero stage" id="home">
       <div className="wrap hero-grid">
@@ -116,19 +149,19 @@ export default function Hero() {
 
           <div className="stats">
             <div className="stat">
-              <b>6+</b>
+              <b>{counts.projects}+</b>
               <span>Projects</span>
             </div>
             <div className="stat">
-              <b>2</b>
+              <b>{counts.degrees}</b>
               <span>Degrees</span>
             </div>
             <div className="stat">
-              <b>5</b>
+              <b>{counts.skills}</b>
               <span>Core skills</span>
             </div>
             <div className="stat">
-              <b>1</b>
+              <b>{counts.internship}</b>
               <span>Internship</span>
             </div>
           </div>

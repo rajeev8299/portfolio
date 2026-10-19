@@ -19,14 +19,14 @@ export default function IntroOverlay() {
       document.body.classList.remove("introing");
       setTimeout(() => {
         setHidden(true);
-      }, 1500);
+      }, 600);
     };
 
     document.body.classList.add("introing");
 
     const timer = setTimeout(() => {
       handleEnd();
-    }, 1500);
+    }, 750);
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" || e.key === " ") {
@@ -48,7 +48,7 @@ export default function IntroOverlay() {
     document.body.classList.remove("introing");
     setTimeout(() => {
       setHidden(true);
-    }, 1500);
+    }, 600);
   };
 
   if (hidden) return null;

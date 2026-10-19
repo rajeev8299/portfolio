@@ -1,5 +1,5 @@
 import BackgroundEffects from "@/components/BackgroundEffects";
-import IntroOverlay from "@/components/IntroOverlay";
+import WelcomeBanner from "@/components/WelcomeBanner";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import DevShowcase from "@/components/DevShowcase";
@@ -19,7 +19,7 @@ export default function Home() {
     <>
       <BackgroundEffects />
       <Navbar />
-      <IntroOverlay />
+      <WelcomeBanner />
       <InteractiveCards />
 
       <main>

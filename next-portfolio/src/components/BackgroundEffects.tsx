@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
 
 export default function BackgroundEffects() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -20,10 +21,10 @@ export default function BackgroundEffects() {
 
     const openTimer = setTimeout(() => {
       setShutterOpen(true);
-    }, 50);
+    }, 20);
     const removeTimer = setTimeout(() => {
       setShutterRemoved(true);
-    }, 1000);
+    }, 500);
     return () => {
       clearTimeout(openTimer);
       clearTimeout(removeTimer);
@@ -210,250 +211,280 @@ export default function BackgroundEffects() {
     };
   }, []);
 
-  // 3D Canvas Space Particle Network
+  // Three.js 3D Scroll Background Effect
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
 
-    let vw = 0,
-      vh = 0,
-      dpr = 1;
-    let pts: Array<{
-      x: number;
-      y: number;
-      z: number;
-      vx: number;
-      vy: number;
-      sx?: number;
-      sy?: number;
-      s?: number;
-      word?: string | null;
-      colorBase?: string | null;
-      glowColor?: string | null;
-      rot?: number;
-      rotSpeed?: number;
-      side?: number;
-    }> = [];
-    let mx = 0,
-      my = 0,
-      running = true,
-      rafQueued = false;
+    const TEAL = 0x5eead4;
+    const VIOLET = 0xa78bfa;
+    const WORLD = 120;
 
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const reduce = mq.matches;
-
-    const resize = () => {
-      vw = window.innerWidth || document.documentElement.clientWidth || 800;
-      vh = window.innerHeight || document.documentElement.clientHeight || 600;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.max(1, Math.round(vw * dpr));
-      canvas.height = Math.max(1, Math.round(vh * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const N = Math.max(38, Math.min(90, Math.round((vw * vh) / 16000)));
-      pts = [];
-
-      const techWords = [
-        { name: "HTML5", color: "rgba(255,115,70,", glow: "rgba(255,87,34,0.35)" },
-        { name: "CSS3", color: "rgba(34,211,238,", glow: "rgba(34,211,238,0.35)" },
-        { name: "JavaScript", color: "rgba(251,191,36,", glow: "rgba(251,191,36,0.35)" },
-        { name: "React", color: "rgba(56,189,248,", glow: "rgba(56,189,248,0.35)" },
-        { name: "Next.js", color: "rgba(245,245,250,", glow: "rgba(124,92,255,0.35)" },
-      ];
-
-      for (let i = 0; i < N; i++) {
-        const isTech = i < techWords.length * 2;
-        const tw = isTech ? techWords[i % techWords.length] : null;
-        const pSide = i % 2 === 0 ? -1 : 1;
-        const px = isTech
-          ? pSide * (vw * 0.46 + Math.random() * (vw * 0.32))
-          : (Math.random() - 0.5) * vw * 1.6;
-        const py = (Math.random() - 0.5) * vh * 1.6;
-
-        pts.push({
-          x: px,
-          y: py,
-          z: Math.random() * 650 + 130,
-          vx: (Math.random() - 0.5) * 0.28,
-          vy: (Math.random() - 0.5) * 0.28,
-          word: tw ? tw.name : null,
-          colorBase: tw ? tw.color : null,
-          glowColor: tw ? tw.glow : null,
-          rot: Math.random() * Math.PI * 2,
-          rotSpeed: (Math.random() - 0.5) * 0.008,
-          side: pSide,
-        });
-      }
-      if (reduce) paintStatic();
-    };
-
-    const paintStatic = () => {
-      ctx.clearRect(0, 0, vw, vh);
-      pts.forEach((p) => {
-        const s = 560 / (560 + p.z);
-        ctx.beginPath();
-        ctx.arc(vw / 2 + p.x * s, vh / 2 + p.y * s, Math.max(0.5, 2 * s), 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(124,92,255,.4)";
-        ctx.fill();
-      });
-    };
-
-    const schedule = () => {
-      if (rafQueued || !ctx || !running || reduce) return;
-      rafQueued = true;
-      requestAnimationFrame(() => {
-        rafQueued = false;
-        frame();
-      });
-    };
-
-    const frame = () => {
-      if (!running || !ctx) return;
-      ctx.clearRect(0, 0, vw, vh);
-      const cx = vw / 2;
-      const cy = vh / 2;
-      const proj = 560;
-      const contentHalfW = Math.min(vw * 0.46, 600);
-      const marginSafe = Math.max(contentHalfW + 40, vw * 0.4);
-
-      for (let i = 0; i < pts.length; i++) {
-        const p = pts[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.word && p.rotSpeed) {
-          p.rot = (p.rot || 0) + p.rotSpeed;
-        }
-
-        if (p.word) {
-          const minX = marginSafe;
-          if (p.side === -1) {
-            if (p.x > -minX) {
-              p.x = -minX;
-              p.vx = -Math.abs(p.vx);
-            }
-            if (p.x < -vw * 0.95) {
-              p.x = -vw * 0.95;
-              p.vx = Math.abs(p.vx);
-            }
-          } else {
-            if (p.x < minX) {
-              p.x = minX;
-              p.vx = Math.abs(p.vx);
-            }
-            if (p.x > vw * 0.95) {
-              p.x = vw * 0.95;
-              p.vx = -Math.abs(p.vx);
-            }
-          }
-        } else {
-          if (p.x > vw * 0.9) p.x = -vw * 0.9;
-          if (p.x < -vw * 0.9) p.x = vw * 0.9;
-        }
-
-        if (p.y > vh * 0.9) p.y = -vh * 0.9;
-        if (p.y < -vh * 0.9) p.y = vh * 0.9;
-
-        const s = proj / (proj + p.z);
-        const sx = cx + (p.x + mx * 40) * s;
-        const sy = cy + (p.y + my * 40) * s;
-
-        if (p.word && p.colorBase) {
-          const screenDist = Math.abs(sx - cx);
-          if (screenDist < marginSafe * 0.92) {
-            continue;
-          }
-          const aWord = Math.min(0.58, Math.max(0.22, s * 0.52));
-          const fontSize = Math.max(11, Math.round(13.8 * s));
-          const curRot = p.rot || 0;
-          const tiltAngle = Math.sin(curRot) * 0.09;
-
-          ctx.save();
-          ctx.translate(sx, sy);
-          ctx.rotate(tiltAngle);
-
-          // Glowing planet core
-          ctx.beginPath();
-          ctx.arc(0, 0, Math.max(0.9, 2.2 * s), 0, Math.PI * 2);
-          ctx.fillStyle = `${p.colorBase}${aWord * 1.35})`;
-          ctx.shadowColor = p.glowColor || "rgba(124,92,255,0.4)";
-          ctx.shadowBlur = 8 * s;
-          ctx.fill();
-          ctx.shadowBlur = 0;
-
-          // Shiny multicolor typography
-          ctx.font = `600 ${fontSize}px 'Space Grotesk', -apple-system, sans-serif`;
-          ctx.fillStyle = `${p.colorBase}${aWord})`;
-          ctx.fillText(p.word, 7, 4);
-
-          ctx.restore();
-        } else {
-          const r = Math.max(0.5, 2.1 * s);
-          const a = Math.min(0.65, Math.max(0.1, s * 0.6));
-          ctx.beginPath();
-          ctx.arc(sx, sy, r, 0, Math.PI * 2);
-          ctx.fillStyle =
-            i % 3 === 0
-              ? `rgba(34,211,238,${a})`
-              : i % 3 === 1
-              ? `rgba(124,92,255,${a})`
-              : `rgba(255,92,157,${a * 0.7})`;
-          ctx.fill();
-        }
-
-        p.sx = sx;
-        p.sy = sy;
-        p.s = s;
-      }
-
-      // Soft connecting links
-      for (let i = 0; i < pts.length; i++) {
-        for (let j = i + 1; j < pts.length; j++) {
-          const A = pts[i];
-          const B = pts[j];
-          if (!A.sx || !B.sx || !A.sy || !B.sy) continue;
-          const dx = A.sx - B.sx;
-          const dy = A.sy - B.sy;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < 8000) {
-            const o = (1 - d2 / 8000) * 0.22;
-            ctx.strokeStyle = `rgba(160,170,255,${o.toFixed(3)})`;
-            ctx.lineWidth = 0.55;
-            ctx.beginPath();
-            ctx.moveTo(A.sx, A.sy);
-            ctx.lineTo(B.sx, B.sy);
-            ctx.stroke();
-          }
-        }
-      }
-      schedule();
-    };
-
-    const handlePointerMove = (e: PointerEvent) => {
-      mx = e.clientX / window.innerWidth - 0.5;
-      my = e.clientY / window.innerHeight - 0.5;
-    };
-
-    const handleVisibility = () => {
-      running = !document.hidden;
-      if (running) schedule();
-    };
-
-    window.addEventListener("resize", resize);
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
-    document.addEventListener("visibilitychange", handleVisibility);
-
-    resize();
-    if (!reduce) {
-      schedule();
-    } else {
-      paintStatic();
+    function makeSprite() {
+      const c = document.createElement("canvas");
+      c.width = c.height = 64;
+      const g = c.getContext("2d");
+      if (!g) return new THREE.CanvasTexture(c);
+      const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+      grd.addColorStop(0, "rgba(255,255,255,1)");
+      grd.addColorStop(0.35, "rgba(255,255,255,0.5)");
+      grd.addColorStop(1, "rgba(255,255,255,0)");
+      g.fillStyle = grd;
+      g.fillRect(0, 0, 64, 64);
+      return new THREE.CanvasTexture(c);
     }
 
+    const TECH: [string, string][] = [
+      ["HTML5", "#fb923c"],
+      ["CSS3", "#60a5fa"],
+      ["JavaScript", "#facc15"],
+      ["React", "#38bdf8"],
+      ["Next.js", "#e5e7eb"],
+      ["Node.js", "#4ade80"],
+      ["TypeScript", "#3b82f6"],
+      ["Tailwind", "#22d3ee"],
+      ["Python", "#5eead4"],
+      ["PHP", "#a78bfa"],
+      ["MySQL", "#38bdf8"],
+      ["WordPress", "#93c5fd"],
+      ["Git", "#f87171"],
+      ["API", "#fbbf24"],
+    ];
+
+    function makeWordTexture(text: string, color: string) {
+      const w = 512;
+      const h = 160;
+      const c = document.createElement("canvas");
+      c.width = w;
+      c.height = h;
+      const g = c.getContext("2d");
+      if (g) {
+        g.font = 'bold 72px "Space Grotesk", "Courier New", monospace';
+        g.textAlign = "center";
+        g.textBaseline = "middle";
+        g.shadowColor = color;
+        g.shadowBlur = 35;
+        g.fillStyle = color;
+        g.fillText(text, w / 2, h / 2);
+        g.fillText(text, w / 2, h / 2);
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    const isMobile = window.innerWidth < 768;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const k = reduceMotion ? 0 : 1;
+
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: true, powerPreference: "high-performance" });
+    } catch (err) {
+      console.warn("WebGL unavailable:", err);
+      return;
+    }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x030305, 0.012);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 400);
+    camera.position.set(0, 0, 30);
+
+    /* ---- particles: across entire length (reduced by another 50% for crystal clear page) ---- */
+    const COUNT = isMobile ? 180 : 420;
+    const pos = new Float32Array(COUNT * 3);
+    const col = new Float32Array(COUNT * 3);
+    const cA = new THREE.Color(TEAL);
+    const cB = new THREE.Color(VIOLET);
+    for (let i = 0; i < COUNT; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 140;
+      pos[i * 3 + 1] = 40 - Math.random() * (WORLD + 80);
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 90;
+      const c = cA.clone().lerp(cB, Math.random());
+      col.set([c.r, c.g, c.b], i * 3);
+    }
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    pGeo.setAttribute("color", new THREE.BufferAttribute(col, 3));
+    const sprite = makeSprite();
+    const particles = new THREE.Points(
+      pGeo,
+      new THREE.PointsMaterial({
+        size: 0.65,
+        map: sprite,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.45,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      })
+    );
+    scene.add(particles);
+
+    /* ---- hero clouds with rotating 3D tech names (reduced by 50% for clean breathing space) ---- */
+    const dim = isMobile ? 0.45 : 0.65;
+    const wordTex = new Map<string, THREE.CanvasTexture>();
+    const heroDefs = [
+      { at: 0.12, side: 1 },
+      { at: 0.48, side: -1 },
+      { at: 0.82, side: 1 },
+    ];
+    const heroes = heroDefs.map((d, i) => {
+      const group = new THREE.Group();
+      const s = isMobile ? 0.7 : 1.0;
+      group.scale.set(s, s, s);
+      group.position.set(isMobile ? 0 : d.side * 24, -d.at * WORLD, -10);
+
+      const cloud = new THREE.Group();
+      const n = isMobile ? 4 : 6;
+      const R = 9.2;
+      const sprites: THREE.Sprite[] = [];
+      for (let j = 0; j < n; j++) {
+        const [name, color] = TECH[(j + i * 4) % TECH.length];
+        if (!wordTex.has(name)) wordTex.set(name, makeWordTexture(name, color));
+        const sp = new THREE.Sprite(
+          new THREE.SpriteMaterial({ map: wordTex.get(name)!, transparent: true, opacity: 0.65 * dim, depthWrite: false })
+        );
+        sp.scale.set(isMobile ? 6 : 8.5, isMobile ? 1.9 : 2.6, 1);
+        const y = 1 - (2 * (j + 0.5)) / n;
+        const r = Math.sqrt(1 - y * y);
+        const a = j * 2.399963;
+        sp.position.set(Math.cos(a) * r * R, y * R, Math.sin(a) * r * R);
+        cloud.add(sp);
+        sprites.push(sp);
+      }
+      const ico = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(11.8, 1),
+        new THREE.MeshBasicMaterial({ color: VIOLET, wireframe: true, transparent: true, opacity: 0.11 * dim })
+      );
+      group.add(cloud);
+      group.add(ico);
+      scene.add(group);
+      return { group, cloud, sprites, ico, Rw: R * s, baseY: group.position.y, phase: i * 1.7 };
+    });
+
+    /* ---- small floating wireframe shapes (cubes, octahedrons, tetrahedrons - reduced by another 50%) ---- */
+    const floaters: THREE.Mesh[] = [];
+    const geos = [
+      new THREE.OctahedronGeometry(1.2),
+      new THREE.TetrahedronGeometry(1.3),
+      new THREE.BoxGeometry(1.3, 1.3, 1.3),
+    ];
+    const FCOUNT = isMobile ? 3 : 7;
+    for (let fIdx = 0; fIdx < FCOUNT; fIdx++) {
+      const m = new THREE.Mesh(
+        geos[fIdx % 3],
+        new THREE.MeshBasicMaterial({
+          color: fIdx % 2 ? TEAL : VIOLET,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.22,
+        })
+      );
+      const yPos = 16 - Math.random() * (WORLD + 30);
+      m.position.set((Math.random() - 0.5) * (isMobile ? 44 : 88), yPos, (Math.random() - 0.5) * 34 - 5);
+      m.userData = { speed: 0.2 + Math.random() * 0.5, off: Math.random() * 6.28, base: yPos };
+      floaters.push(m);
+      scene.add(m);
+    }
+
+    /* ---- interaction ---- */
+    const mouse = { x: 0, y: 0 };
+    const target = { x: 0, y: 0 };
+    const onMove = (e: MouseEvent) => {
+      target.x = (e.clientX / window.innerWidth - 0.5) * 2;
+      target.y = (e.clientY / window.innerHeight - 0.5) * 2;
+    };
+    const onResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("resize", onResize);
+
+    const scrollProgress = () => {
+      const doc = document.documentElement;
+      const max = Math.max(1, doc.scrollHeight - window.innerHeight);
+      return Math.min(1, Math.max(0, (window.scrollY || window.pageYOffset || 0) / max));
+    };
+
+    /* ---- loop with tight scroll tracking ---- */
+    const t0 = performance.now();
+    const tmpV = new THREE.Vector3();
+    let raf = 0;
+    let running = true;
+    let p = scrollProgress();
+
+    const loop = () => {
+      if (!running) return;
+      raf = requestAnimationFrame(loop);
+      const t = (performance.now() - t0) / 1000;
+
+      // Tight responsive lerp (0.16) for immediate scroll-match without lag
+      p += (scrollProgress() - p) * 0.16;
+      const camBase = -p * WORLD;
+
+      mouse.x += (target.x - mouse.x) * 0.08;
+      mouse.y += (target.y - mouse.y) * 0.08;
+
+      camera.position.x = mouse.x * 2.5;
+      camera.position.y = camBase - mouse.y * 1.5;
+      camera.lookAt(0, camBase, 0);
+
+      heroes.forEach((h) => {
+        h.cloud.rotation.x = 0.26;
+        h.cloud.rotation.y = t * 0.38 * k + p * 2.8;
+        h.sprites.forEach((sp) => {
+          sp.getWorldPosition(tmpV);
+          const f = Math.min(1, Math.max(0, (tmpV.z - h.group.position.z + h.Rw) / (2 * h.Rw)));
+          sp.material.opacity = (0.25 + 0.75 * f) * dim;
+        });
+        h.ico.rotation.y = -t * 0.14 * k;
+        h.ico.rotation.z = t * 0.1 * k;
+        h.group.position.y = h.baseY + Math.sin(t * 0.6 + h.phase) * 0.6 * k;
+      });
+
+      particles.rotation.y = t * 0.015 * k + p * 0.5;
+
+      floaters.forEach((f) => {
+        f.rotation.x += 0.005 * f.userData.speed * k;
+        f.rotation.y += 0.007 * f.userData.speed * k;
+        f.position.y = f.userData.base + Math.sin(t * f.userData.speed + f.userData.off) * 1.2 * k;
+      });
+
+      renderer.render(scene, camera);
+    };
+
+
+    const onVisibility = () => {
+      running = !document.hidden;
+      if (running) loop();
+      else cancelAnimationFrame(raf);
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    loop();
+
     return () => {
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("pointermove", handlePointerMove);
-      document.removeEventListener("visibilitychange", handleVisibility);
+      running = false;
+      cancelAnimationFrame(raf);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibility);
+      scene.traverse((obj) => {
+        if ((obj as THREE.Mesh).geometry) (obj as THREE.Mesh).geometry.dispose();
+        if ((obj as THREE.Mesh).material) {
+          const mat = (obj as THREE.Mesh).material;
+          const mats = Array.isArray(mat) ? mat : [mat];
+          mats.forEach((m) => {
+            if ("map" in m && m.map) (m.map as THREE.Texture).dispose();
+            m.dispose();
+          });
+        }
+      });
+      sprite.dispose();
+      renderer.dispose();
     };
   }, []);
 
@@ -481,7 +512,7 @@ export default function BackgroundEffects() {
       <div className="vignette" />
 
       {/* Space & Auras */}
-      <canvas ref={canvasRef} id="space" aria-hidden="true" />
+      <canvas ref={canvasRef} id="bg3d" aria-hidden="true" style={{ position: "fixed", inset: 0, width: "100%", height: "100%", zIndex: -2, pointerEvents: "none" }} />
       <div className="aura aura-a" />
       <div className="aura aura-b" />
       <div className="aura aura-c" />
