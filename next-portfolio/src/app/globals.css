@@ -2917,26 +2917,34 @@ body.introing .hero .reveal {
   }
   .menu {
     position: fixed;
-    inset: 74px 0 auto 0;
+    inset: 74px var(--pad) auto auto;
+    width: min(240px, calc(100vw - 2 * var(--pad)));
     flex-direction: column;
     align-items: stretch;
-    gap: 4px;
+    gap: 2px;
     background: rgba(8, 8, 11, 0.98);
-    border-bottom: 1px solid var(--line);
-    padding: 16px var(--pad) 26px;
-    transform: translateY(-150%);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 8px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.42);
+    transform: translateY(-12px);
     visibility: hidden;
-    transition: transform 0.4s var(--ease), visibility 0.4s var(--ease);
+    opacity: 0;
+    transition:
+      transform 0.3s var(--ease),
+      visibility 0.3s var(--ease),
+      opacity 0.3s var(--ease);
     backdrop-filter: blur(18px);
   }
   .menu.open {
     transform: translateY(0);
     visibility: visible;
+    opacity: 1;
   }
   .menu a {
-    padding: 14px 16px;
-    border-radius: 13px;
-    font-size: 16.5px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    font-size: 14px;
   }
   .burger {
     display: grid;

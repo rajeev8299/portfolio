@@ -955,12 +955,15 @@ body.introing .hero .reveal{opacity:0!important;transform:translateY(34px)!impor
 }
 @media (max-width:1080px){
   .photo-stage{width:min(100%,340px)}
-  .menu{position:fixed;inset:74px 0 auto 0;flex-direction:column;align-items:stretch;gap:4px;
-    background:rgba(8,8,11,.98);border-bottom:1px solid var(--line);padding:16px var(--pad) 26px;
-    transform:translateY(-150%);visibility:hidden;transition:transform .4s var(--ease),visibility .4s var(--ease);
+  .menu{position:fixed;inset:74px var(--pad) auto auto;width:min(240px,calc(100vw - 2 * var(--pad)));
+    flex-direction:column;align-items:stretch;gap:2px;
+    background:rgba(8,8,11,.98);border:1px solid var(--line);border-radius:16px;padding:8px;
+    box-shadow:0 16px 40px rgba(0,0,0,.42);
+    transform:translateY(-12px);visibility:hidden;opacity:0;
+    transition:transform .3s var(--ease),visibility .3s var(--ease),opacity .3s var(--ease);
     backdrop-filter:blur(18px)}
-  .menu.open{transform:translateY(0);visibility:visible}
-  .menu a{padding:14px 16px;border-radius:13px;font-size:16.5px}
+  .menu.open{transform:translateY(0);visibility:visible;opacity:1}
+  .menu a{padding:9px 12px;border-radius:10px;font-size:14px}
   .burger{display:grid}
   .nav-cta .btn{display:none}
 }
