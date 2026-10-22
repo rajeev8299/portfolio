@@ -775,6 +775,21 @@ footer{border-top:1px solid var(--line);padding:32px 0 46px;margin-top:24px;posi
 .foot a{transition:.25s var(--ease)}
 .foot a:hover{color:var(--ink)}
 .foot-links{display:flex;gap:20px}
+.foot-social{display:flex;align-items:center;gap:10px}
+.foot-social a{width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--line);
+  border-radius:12px;background:rgba(255,255,255,.04);color:var(--muted);transition:.25s var(--ease);overflow:hidden}
+.foot-social a:hover{transform:translateY(-3px)}
+.foot-social a:active{transform:scale(1.14)}
+.foot-social a:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+.foot-social .social-whatsapp:hover{color:#25D366;border-color:rgba(37,211,102,.55);background:rgba(37,211,102,.1);
+  box-shadow:0 8px 24px rgba(37,211,102,.16)}
+.foot-social .social-instagram:hover{color:#E1306C;border-color:rgba(225,48,108,.55);background:rgba(225,48,108,.1);
+  box-shadow:0 8px 24px rgba(225,48,108,.16)}
+.foot-social .social-facebook:hover{color:#1877F2;border-color:rgba(24,119,242,.55);background:rgba(24,119,242,.1);
+  box-shadow:0 8px 24px rgba(24,119,242,.16)}
+.foot-social .social-telegram:hover{color:#24A1DE;border-color:rgba(36,161,222,.55);background:rgba(36,161,222,.1);
+  box-shadow:0 8px 24px rgba(36,161,222,.16)}
+.foot-social svg{width:100%;height:100%;display:block}
 
 .to-top{position:fixed;right:20px;bottom:20px;z-index:60;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
   border:1px solid var(--line);background:rgba(14,14,19,.9);color:var(--ink);cursor:pointer;opacity:0;pointer-events:none;
@@ -1592,6 +1607,20 @@ button { padding: 10px 16px; color: white; background: #ef6472; border: 0; borde
 <footer>
   <div class="wrap foot">
     <span>© <span id="year">2026</span> Rajeev Yadav — Web Developer</span>
+    <div class="foot-social" aria-label="Social media links">
+      <a class="social-whatsapp" href="https://wa.me/918299279529" target="_blank" rel="noopener noreferrer" aria-label="Chat with me on WhatsApp" title="WhatsApp">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path fill="#25D366" d="M12.04 2a9.94 9.94 0 0 0-8.52 15.07L2.2 21.8l4.84-1.27A9.94 9.94 0 1 0 12.04 2Z"/><path fill="#fff" d="M17.6 14.34c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.16-.17.2-.34.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.48-1.76-1.65-2.05-.17-.3-.02-.46.13-.6.13-.14.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.66-1.6-.9-2.2-.24-.58-.48-.5-.66-.5h-.56c-.2 0-.5.07-.78.37-.27.3-1.02 1-1.02 2.45s1.05 2.85 1.2 3.05c.15.2 2.07 3.17 5.04 4.44.7.3 1.25.48 1.68.62.7.22 1.34.19 1.84.11.56-.08 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35Z"/></svg>
+      </a>
+      <a class="social-instagram" href="https://www.instagram.com/its_rajeev_yaduvanshi?cplk=OTF5M2l0c3VvOWh5" target="_blank" rel="noopener noreferrer" aria-label="Visit my Instagram profile" title="Instagram">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><defs><linearGradient id="instagramGradient" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FFB800"/><stop offset=".5" stop-color="#FF315A"/><stop offset="1" stop-color="#9B36E8"/></linearGradient></defs><rect x="1" y="1" width="22" height="22" rx="6" fill="url(#instagramGradient)"/><rect x="5.5" y="5.5" width="13" height="13" rx="4" fill="none" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.2" cy="6.9" r="1.2" fill="#fff"/></svg>
+      </a>
+      <a class="social-facebook" href="https://www.facebook.com/share/18VtHp6bA7/" target="_blank" rel="noopener noreferrer" aria-label="Visit my Facebook profile" title="Facebook">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="1" y="1" width="22" height="22" rx="5" fill="#1877F2"/><path fill="#fff" d="M13.5 21v-8.2h2.76l.41-3.2H13.5V7.56c0-.93.26-1.56 1.6-1.56h1.7V3.14c-.3-.04-1.34-.14-2.55-.14-2.52 0-4.25 1.54-4.25 4.37V9.6H7.15v3.2H10V21h3.5Z"/></svg>
+      </a>
+      <a class="social-telegram" href="https://t.me/+918299279529" target="_blank" rel="noopener noreferrer" aria-label="Contact me on Telegram using my mobile number" title="Telegram">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="1" y="1" width="22" height="22" rx="5" fill="#24A1DE"/><path fill="#fff" d="m19.8 5.1-2.9 13.7c-.22.97-.8 1.2-1.62.75l-4.48-3.3-2.16 2.08c-.24.24-.44.44-.9.44l.32-4.56 8.3-7.5c.36-.32-.08-.5-.55-.18L5.55 13.03l-4.4-1.38c-.95-.3-.97-.95.2-1.4l17.2-6.63c.8-.3 1.5.2 1.25 1.48Z" transform="translate(1 1) scale(.92)"/></svg>
+      </a>
+    </div>
     <div class="foot-links">
       <a href="https://github.com/rajeev8299" target="_blank" rel="noopener">GitHub</a>
       <a href="assets/resume.pdf" download class="js-resume">Resume</a>
@@ -1977,9 +2006,10 @@ button { padding: 10px 16px; color: white; background: #ef6472; border: 0; borde
   /* ---------- Three.js 3D Scroll Background ---------- */
 })();
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function () {
+function initializeThreeBackground() {
   if (typeof THREE === "undefined") return;
 
   var TEAL = 0x5eead4;
@@ -2234,6 +2264,10 @@ button { padding: 10px 16px; color: white; background: #ef6472; border: 0; borde
   }
 
   createBackground(document.getElementById("bg3d"));
+}
+  var threeScript = document.currentScript.previousElementSibling;
+  if (typeof THREE !== "undefined") initializeThreeBackground();
+  else threeScript.addEventListener("load", initializeThreeBackground, { once: true });
 })();
 </script>
 
@@ -2344,14 +2378,14 @@ button { padding: 10px 16px; color: white; background: #ef6472; border: 0; borde
                   welcome.classList.add("is-ready");
                   if (wiStack) wiStack.classList.add("on");
                 }
-              }, 30);
+              }, 20);
             }, 100);
           }
-        }, 35);
-      }, 900);
+        }, 25);
+      }, 250);
 
-      // Auto exit after 3.6s
-      addTimeout(endWelcome, 3600);
+      // Keep the intro brief so it does not delay access to the page.
+      addTimeout(endWelcome, 1800);
 
       if (wiSkip) wiSkip.addEventListener("click", function(e) { e.stopPropagation(); endWelcome(); });
       welcome.addEventListener("click", endWelcome);
